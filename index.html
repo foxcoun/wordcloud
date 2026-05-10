@@ -16,13 +16,11 @@
       flex-direction: column;
     }
 
-    header {
-      text-align: center;
-      padding: 20px 16px 10px;
-    }
+    /* ── Header ── */
+    header { text-align: center; padding: 20px 16px 8px; }
     header h1 {
-      font-size: clamp(1.4rem, 4vw, 2rem);
-      font-weight: 700;
+      font-size: clamp(1.5rem, 4vw, 2.2rem);
+      font-weight: 800;
       background: linear-gradient(135deg, #60a5fa, #a78bfa);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -30,6 +28,7 @@
     }
     header p { margin-top: 4px; font-size: 0.85rem; color: #64748b; }
 
+    /* ── Input ── */
     .input-row {
       display: flex;
       justify-content: center;
@@ -50,11 +49,11 @@
     .input-row input:focus { border-color: #60a5fa; }
     .input-row input::placeholder { color: #475569; }
     .input-row button {
-      padding: 10px 22px;
+      padding: 10px 24px;
       border-radius: 10px;
       border: none;
       background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-      color: white;
+      color: #fff;
       font-size: 1rem;
       font-weight: 700;
       cursor: pointer;
@@ -62,17 +61,18 @@
     }
     .input-row button:hover { opacity: 0.88; }
     .input-row button:active { transform: scale(0.96); }
-    .input-row button:disabled { opacity: 0.45; cursor: not-allowed; }
+    .input-row button:disabled { opacity: 0.4; cursor: not-allowed; }
 
     /* ── 主體兩欄 ── */
     .main {
       flex: 1;
       display: grid;
-      grid-template-columns: 1fr 260px;
+      grid-template-columns: 1fr 270px;
       gap: 12px;
       padding: 0 16px 16px;
+      min-height: 0;
     }
-    @media (max-width: 700px) {
+    @media (max-width: 680px) {
       .main { grid-template-columns: 1fr; }
     }
 
@@ -80,21 +80,30 @@
     .cloud-panel {
       background: #1e293b;
       border-radius: 16px;
-      position: relative;
-      overflow: hidden;
-      min-height: 320px;
-    }
-    #cloud-canvas { display: block; }
-    .empty-hint {
-      position: absolute;
-      inset: 0;
+      min-height: 340px;
+      padding: 24px;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #334155;
-      font-size: 1rem;
-      pointer-events: none;
     }
+    #cloud-words {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 10px 14px;
+      width: 100%;
+    }
+    .cloud-word {
+      display: inline-block;
+      font-weight: 700;
+      line-height: 1.1;
+      cursor: default;
+      transition: transform 0.2s;
+      user-select: none;
+    }
+    .cloud-word:hover { transform: scale(1.15); }
+    .empty-hint { color: #334155; font-size: 1rem; text-align: center; }
 
     /* ── 排行榜 ── */
     .rank-panel {
@@ -102,11 +111,13 @@
       border-radius: 16px;
       padding: 16px;
       overflow-y: auto;
+      max-height: 500px;
     }
     .rank-panel h2 {
       font-size: 0.95rem;
       color: #94a3b8;
       margin-bottom: 12px;
+      letter-spacing: 0.03em;
     }
     .rank-item {
       display: flex;
@@ -115,47 +126,34 @@
       padding: 7px 0;
       border-bottom: 1px solid #0f172a;
     }
-    .rank-no {
-      width: 22px;
-      height: 22px;
+    .medal {
+      width: 24px; height: 24px;
       border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.72rem;
-      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.72rem; font-weight: 700;
       flex-shrink: 0;
     }
-    .rank-no.gold   { background: #fbbf24; color: #1c1917; }
-    .rank-no.silver { background: #94a3b8; color: #1c1917; }
-    .rank-no.bronze { background: #c2693a; color: white; }
-    .rank-no.other  { background: #0f172a; color: #64748b; border: 1px solid #334155; }
-    .rank-word { flex: 1; font-size: 0.9rem; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .rank-bar-wrap { width: 48px; background: #0f172a; border-radius: 4px; height: 6px; overflow: hidden; flex-shrink: 0; }
-    .rank-bar { height: 100%; border-radius: 4px; background: linear-gradient(90deg,#3b82f6,#8b5cf6); }
-    .rank-count { font-size: 0.8rem; color: #94a3b8; width: 24px; text-align: right; flex-shrink: 0; }
+    .medal-1 { background: #fbbf24; color: #1c1917; }
+    .medal-2 { background: #94a3b8; color: #1c1917; }
+    .medal-3 { background: #c2693a; color: #fff; }
+    .medal-n { background: #0f172a; color: #475569; border: 1px solid #334155; }
+    .rank-word { flex: 1; font-size: 0.92rem; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .rank-bar-wrap { width: 52px; background: #0f172a; border-radius: 4px; height: 6px; overflow: hidden; flex-shrink: 0; }
+    .rank-bar { height: 100%; border-radius: 4px; background: linear-gradient(90deg, #3b82f6, #8b5cf6); transition: width 0.4s; }
+    .rank-count { font-size: 0.8rem; color: #64748b; width: 26px; text-align: right; flex-shrink: 0; }
 
-    .status {
-      text-align: center;
-      font-size: 0.78rem;
-      color: #334155;
-      padding: 6px 0 12px;
-    }
+    /* ── Status ── */
+    .status { text-align: center; font-size: 0.78rem; color: #334155; padding: 6px 0 12px; }
     .status span { color: #60a5fa; }
 
+    /* ── Toast ── */
     .toast {
-      position: fixed;
-      bottom: 24px;
-      left: 50%;
+      position: fixed; bottom: 24px; left: 50%;
       transform: translateX(-50%) translateY(80px);
-      background: #1d4ed8;
-      color: white;
-      padding: 10px 20px;
-      border-radius: 10px;
-      font-size: 0.9rem;
-      transition: transform 0.3s;
-      pointer-events: none;
-      z-index: 99;
+      background: #1d4ed8; color: #fff;
+      padding: 10px 20px; border-radius: 10px;
+      font-size: 0.9rem; transition: transform 0.3s;
+      pointer-events: none; z-index: 99;
     }
     .toast.show { transform: translateX(-50%) translateY(0); }
   </style>
@@ -168,108 +166,86 @@
 </header>
 
 <div class="input-row">
-  <input type="text" id="word-input" placeholder="輸入關鍵字（最多 20 字）" maxlength="20" autocomplete="off">
+  <input id="word-input" type="text" placeholder="輸入關鍵字（最多 20 字）" maxlength="20" autocomplete="off">
   <button id="submit-btn" onclick="submitWord()">送出</button>
 </div>
 
 <div class="main">
-  <div class="cloud-panel" id="cloud-panel">
-    <canvas id="cloud-canvas"></canvas>
-    <div class="empty-hint" id="empty-hint">尚無資料，快來輸入第一個關鍵字！</div>
+
+  <!-- 文字雲 -->
+  <div class="cloud-panel">
+    <div id="cloud-words">
+      <span class="empty-hint">尚無資料，快來輸入第一個關鍵字！</span>
+    </div>
   </div>
 
+  <!-- 排行榜 -->
   <div class="rank-panel">
     <h2>🏆 關鍵字排行榜</h2>
-    <div id="rank-list"></div>
+    <div id="rank-list"><p style="color:#334155;font-size:0.85rem;">尚無資料</p></div>
   </div>
+
 </div>
 
 <div class="status">即時更新中・目前共 <span id="word-count">0</span> 筆</div>
-
 <div class="toast" id="toast"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/wordcloud@1.2.2/src/wordcloud2.js"></script>
-
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-app.js";
+import { initializeApp }    from "https://www.gstatic.com/firebasejs/11.7.1/firebase-app.js";
 import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp }
-  from "https://www.gstatic.com/firebasejs/11.7.1/firebase-firestore.js";
+                             from "https://www.gstatic.com/firebasejs/11.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBEZzmk1X83gqmpx4kK3AvvmX7AuiMdqGQ",
-  authDomain: "chungyi-study.firebaseapp.com",
-  projectId: "chungyi-study",
-  storageBucket: "chungyi-study.firebasestorage.app",
+  apiKey           : "AIzaSyBEZzmk1X83gqmpx4kK3AvvmX7AuiMdqGQ",
+  authDomain       : "chungyi-study.firebaseapp.com",
+  projectId        : "chungyi-study",
+  storageBucket    : "chungyi-study.firebasestorage.app",
   messagingSenderId: "649577447046",
-  appId: "1:649577447046:web:af96bffafdb26dac925b07"
+  appId            : "1:649577447046:web:af96bffafdb26dac925b07"
 };
 
 const app = initializeApp(firebaseConfig);
 const db  = getFirestore(app);
 const col = collection(db, "wordcloud_words");
 
-const canvas = document.getElementById("cloud-canvas");
-const panel  = document.getElementById("cloud-panel");
-const hint   = document.getElementById("empty-hint");
+const COLORS   = ["#60a5fa","#a78bfa","#34d399","#fb923c","#f472b6","#facc15","#38bdf8","#4ade80","#f87171"];
+const ROTATES  = [-15, -10, -5, 0, 0, 0, 5, 10, 15];
 
-function syncCanvasSize() {
-  canvas.width  = panel.clientWidth;
-  canvas.height = panel.clientHeight;
-}
+// ── 文字雲（純 CSS） ──
+function renderCloud(freq) {
+  const wrap = document.getElementById("cloud-words");
+  const sorted = Object.entries(freq).sort((a, b) => b[1] - a[1]);
 
-const COLORS = ["#60a5fa","#a78bfa","#34d399","#fb923c","#f472b6","#facc15","#38bdf8","#4ade80"];
-
-let currentFreq = {};
-
-function redraw() {
-  syncCanvasSize();
-  const entries = Object.entries(currentFreq);
-
-  if (entries.length === 0) {
-    hint.style.display = "flex";
-    const ctx = canvas.getContext("2d");
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  if (sorted.length === 0) {
+    wrap.innerHTML = '<span class="empty-hint">尚無資料，快來輸入第一個關鍵字！</span>';
     return;
   }
-  hint.style.display = "none";
 
-  const maxCount = Math.max(...entries.map(([, c]) => c));
-  const minSize = 16;
-  const maxSize = Math.max(48, Math.min(canvas.width, canvas.height) / 4);
+  const maxCount = sorted[0][1];
+  const minPx = 16, maxPx = 72;
 
-  const list = entries
-    .sort((a, b) => b[1] - a[1])
-    .map(([word, count]) => {
-      const ratio = count / maxCount;
-      const size  = Math.round(minSize + ratio ** 0.55 * (maxSize - minSize));
-      return [word, size];
-    });
-
-  WordCloud(canvas, {
-    list,
-    gridSize       : Math.max(4, Math.round(canvas.width / 100)),
-    weightFactor   : 1,
-    fontFamily     : "'Noto Sans TC', 'Microsoft JhengHei', sans-serif",
-    color          : () => COLORS[Math.floor(Math.random() * COLORS.length)],
-    rotateRatio    : 0.25,
-    rotationSteps  : 2,
-    backgroundColor: "#1e293b",
-    drawOutOfBound : false,
-    shuffle        : true,
-    minSize        : 10,
-  });
+  wrap.innerHTML = sorted.map(([word, count], i) => {
+    const ratio  = count / maxCount;
+    const size   = Math.round(minPx + ratio ** 0.5 * (maxPx - minPx));
+    const color  = COLORS[i % COLORS.length];
+    const rotate = ROTATES[Math.floor(Math.random() * ROTATES.length)];
+    return `<span class="cloud-word"
+      style="font-size:${size}px;color:${color};transform:rotate(${rotate}deg)"
+      title="${word} ×${count}">${word}</span>`;
+  }).join("");
 }
 
+// ── 排行榜 ──
 function renderRank(freq) {
   const sorted = Object.entries(freq).sort((a, b) => b[1] - a[1]).slice(0, 20);
-  const max = sorted[0]?.[1] || 1;
-  const medals = ["gold", "silver", "bronze"];
+  const max    = sorted[0]?.[1] || 1;
+  const medals = ["medal-1","medal-2","medal-3"];
 
   document.getElementById("rank-list").innerHTML = sorted.map(([word, count], i) => {
     const pct = Math.round((count / max) * 100);
-    const cls = medals[i] ?? "other";
+    const cls = medals[i] ?? "medal-n";
     return `<div class="rank-item">
-      <div class="rank-no ${cls}">${i + 1}</div>
+      <div class="medal ${cls}">${i + 1}</div>
       <div class="rank-word" title="${word}">${word}</div>
       <div class="rank-bar-wrap"><div class="rank-bar" style="width:${pct}%"></div></div>
       <div class="rank-count">${count}</div>
@@ -277,30 +253,19 @@ function renderRank(freq) {
   }).join("");
 }
 
-// 等畫面渲染完再做第一次 redraw
-let firstDraw = true;
-
+// ── Firestore 即時監聽 ──
 onSnapshot(col, (snapshot) => {
   const freq = {};
   snapshot.forEach(doc => {
     const w = (doc.data().word || "").trim();
     if (w) freq[w] = (freq[w] || 0) + 1;
   });
-  currentFreq = freq;
   document.getElementById("word-count").textContent = snapshot.size;
-
-  if (firstDraw) {
-    // 等 layout 穩定
-    requestAnimationFrame(() => { syncCanvasSize(); redraw(); });
-    firstDraw = false;
-  } else {
-    redraw();
-  }
+  renderCloud(freq);
   renderRank(freq);
 });
 
-window.addEventListener("resize", () => redraw());
-
+// ── 送出 ──
 window.submitWord = async function () {
   const input = document.getElementById("word-input");
   const btn   = document.getElementById("submit-btn");
@@ -310,9 +275,9 @@ window.submitWord = async function () {
   try {
     await addDoc(col, { word, created_at: serverTimestamp() });
     input.value = "";
-    showToast(`「${word}」已送出！`);
+    toast(`「${word}」已送出！`);
   } catch (e) {
-    showToast("送出失敗，請稍後再試");
+    toast("送出失敗，請稍後再試");
     console.error(e);
   }
   btn.disabled = false;
@@ -323,11 +288,11 @@ document.getElementById("word-input").addEventListener("keydown", e => {
   if (e.key === "Enter") window.submitWord();
 });
 
-function showToast(msg) {
-  const t = document.getElementById("toast");
-  t.textContent = msg;
-  t.classList.add("show");
-  setTimeout(() => t.classList.remove("show"), 2500);
+function toast(msg) {
+  const el = document.getElementById("toast");
+  el.textContent = msg;
+  el.classList.add("show");
+  setTimeout(() => el.classList.remove("show"), 2500);
 }
 </script>
 </body>
