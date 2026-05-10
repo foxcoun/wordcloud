@@ -146,6 +146,69 @@
     .status { text-align: center; font-size: 0.78rem; color: #334155; padding: 6px 0 12px; }
     .status span { color: #60a5fa; }
 
+    /* ── 清除按鈕 ── */
+    .clear-btn {
+      display: block;
+      margin: 0 auto 2px;
+      padding: 6px 16px;
+      border-radius: 8px;
+      border: 1px solid #334155;
+      background: transparent;
+      color: #475569;
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .clear-btn:hover { color: #f87171; border-color: #f87171; }
+
+    /* ── 密碼對話框 ── */
+    .dialog-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+    }
+    .dialog-overlay.show { display: flex; }
+    .dialog-box {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 16px;
+      padding: 28px 32px;
+      width: min(360px, 90vw);
+      text-align: center;
+    }
+    .dialog-box h3 { font-size: 1.1rem; margin-bottom: 6px; }
+    .dialog-box p  { font-size: 0.82rem; color: #64748b; margin-bottom: 16px; }
+    .dialog-box input {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 2px solid #334155;
+      background: #0f172a;
+      color: #e2e8f0;
+      font-size: 1rem;
+      outline: none;
+      margin-bottom: 14px;
+      transition: border-color 0.2s;
+    }
+    .dialog-box input:focus { border-color: #f87171; }
+    .dialog-box input.error { border-color: #f87171; animation: shake 0.3s; }
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      25%      { transform: translateX(-6px); }
+      75%      { transform: translateX(6px); }
+    }
+    .dialog-actions { display: flex; gap: 10px; }
+    .dialog-actions button {
+      flex: 1; padding: 10px; border-radius: 8px;
+      border: none; font-size: 0.95rem; font-weight: 700; cursor: pointer;
+    }
+    .btn-cancel { background: #334155; color: #94a3b8; }
+    .btn-confirm { background: linear-gradient(135deg,#ef4444,#b91c1c); color: #fff; }
+    .btn-confirm:hover { opacity: 0.88; }
+
     /* ── Toast ── */
     .toast {
       position: fixed; bottom: 24px; left: 50%;
@@ -187,12 +250,26 @@
 
 </div>
 
+<button class="clear-btn" onclick="openClearDialog()">🗑 全部清除</button>
 <div class="status">即時更新中・目前共 <span id="word-count">0</span> 筆</div>
 <div class="toast" id="toast"></div>
 
+<!-- 密碼對話框 -->
+<div class="dialog-overlay" id="dialog-overlay">
+  <div class="dialog-box">
+    <h3>🔐 老師驗證</h3>
+    <p>請輸入管理密碼以清除所有資料</p>
+    <input type="password" id="pw-input" placeholder="輸入密碼" autocomplete="off">
+    <div class="dialog-actions">
+      <button class="btn-cancel" onclick="closeClearDialog()">取消</button>
+      <button class="btn-confirm" onclick="confirmClear()">確認清除</button>
+    </div>
+  </div>
+</div>
+
 <script type="module">
 import { initializeApp }    from "https://www.gstatic.com/firebasejs/11.7.1/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp }
+import { getFirestore, collection, addDoc, getDocs, deleteDoc, onSnapshot, serverTimestamp }
                              from "https://www.gstatic.com/firebasejs/11.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -286,6 +363,46 @@ window.submitWord = async function () {
 
 document.getElementById("word-input").addEventListener("keydown", e => {
   if (e.key === "Enter") window.submitWord();
+});
+
+// ── 全部清除 ──
+const PASSWORD = "全部清除";
+
+window.openClearDialog = function () {
+  document.getElementById("pw-input").value = "";
+  document.getElementById("pw-input").classList.remove("error");
+  document.getElementById("dialog-overlay").classList.add("show");
+  setTimeout(() => document.getElementById("pw-input").focus(), 100);
+};
+
+window.closeClearDialog = function () {
+  document.getElementById("dialog-overlay").classList.remove("show");
+};
+
+window.confirmClear = async function () {
+  const pw = document.getElementById("pw-input").value;
+  if (pw !== PASSWORD) {
+    const input = document.getElementById("pw-input");
+    input.classList.add("error");
+    setTimeout(() => input.classList.remove("error"), 400);
+    input.value = "";
+    return;
+  }
+  closeClearDialog();
+  try {
+    const snap = await getDocs(col);
+    await Promise.all(snap.docs.map(d => deleteDoc(d.ref)));
+    toast("✅ 已清除所有資料");
+  } catch (e) {
+    toast("清除失敗，請稍後再試");
+    console.error(e);
+  }
+};
+
+// 按 Enter 確認、Esc 取消
+document.getElementById("pw-input").addEventListener("keydown", e => {
+  if (e.key === "Enter")  window.confirmClear();
+  if (e.key === "Escape") window.closeClearDialog();
 });
 
 function toast(msg) {
